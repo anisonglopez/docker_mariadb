@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+#  ----------- DB Container -------------------
+    mariadb:
+        image: mariadb:10.7
+        container_name: docker_mariadb
+        restart: always
+        volumes:
+          # When add maping volumn. Folder db will be create folder from inner docker container  out to local folder
+          #  For protect data without disappear when stop container service.
+            - "./db/data:/var/lib/mysql"
+            - "./db/master:/docker-entrypoint-initdb.d"
+        ports:
+            - 3307:3306
+        environment: 
+          MARIADB_ROOT_PASSWORD: secret
+          MARIADB_ALLOW_EMPTY_PASSWORD: "NO"
+          MARIADB_USER: root
+          MARIADB_PASSWORD: secret
+    phpmyadmin:
+          image: phpmyadmin/phpmyadmin
+          container_name: phpmyadmin_default
+          links:
+            - mariadb
+          restart: always
+          environment:
+            PMA_HOST: docker_mariadb
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+          ports:
+            - 8081:80
+#  Volumn map if dosn't have data will not save to local HDD stroage.
+volumes:
+  mariadb:
+#  line volumns at 18 and line 28 must to relation reference
