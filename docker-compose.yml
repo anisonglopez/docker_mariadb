@@ -33,3 +33,7 @@ services:
 volumes:
   mariadb:
 #  line volumns at 18 and line 28 must to relation reference
+networks: 
+  default: 
+    external: 
+      name: my-network 
